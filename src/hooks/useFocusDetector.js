@@ -15,13 +15,19 @@ const METRICS_INTERVAL_MS = 100; // 화면 표시용 수치는 초당 10번만 �
 // FaceLandmarker 는 무거우므로 앱 전체에서 한 번만 만들어 재사용한다.
 // 모델(.task)과 WASM 모두 public/ 폴더에서 로컬로 불러온다 (외부 CDN 사용 X).
 // ---------------------------------------------------------------------------
-let landmarkerPromise = null;
+const landmarkerCache = {}; // delegate('GPU' | 'CPU') → Promise<FaceLandmarker>
+let filesetPromise = null;
 
-function loadLandmarker() {
-  if (!landmarkerPromise) {
-    landmarkerPromise = (async () => {
-      const base = import.meta.env.BASE_URL; // GitHub Pages 하위 경로에서도 동작하도록
-      const fileset = await FilesetResolver.forVisionTasks(`${base}wasm`);
+/**
+ * @param {'GPU'|'CPU'} preferred 먼저 시도할 실행 방식. GPU 생성이 실패하면 CPU 로 바꿔 만든다.
+ * @returns {Promise<{ landmarker: FaceLandmarker, delegate: 'GPU'|'CPU' }>}
+ */
+function loadLandmarker(preferred = 'GPU') {
+  if (!landmarkerCache[preferred]) {
+    landmarkerCache[preferred] = (async () => {
+      const base = import.meta.env.BASE_URL; // 하위 경로(GitHub Pages)와 루트(Vercel) 모두 동작
+      filesetPromise ??= FilesetResolver.forVisionTasks(`${base}wasm`);
+      const fileset = await filesetPromise;
       const options = (delegate) => ({
         baseOptions: {
           modelAssetPath: `${base}models/face_landmarker.task`,
@@ -32,21 +38,30 @@ function loadLandmarker() {
         outputFaceBlendshapes: true, // 눈 감김 점수(eyeBlinkLeft/Right)용
         outputFacialTransformationMatrixes: true, // 고개 각도 계산용
       });
-      try {
-        return await FaceLandmarker.createFromOptions(fileset, options('GPU'));
-      } catch (err) {
-        // GPU(WebGL)를 쓸 수 없는 환경이면 CPU로 재시도
-        console.warn('[FocusDetector] GPU 초기화 실패, CPU로 전환합니다.', err);
-        return await FaceLandmarker.createFromOptions(fileset, options('CPU'));
+      if (preferred === 'GPU') {
+        try {
+          return { landmarker: await FaceLandmarker.createFromOptions(fileset, options('GPU')), delegate: 'GPU' };
+        } catch (err) {
+          // GPU(WebGL)를 쓸 수 없는 환경이면 CPU로 재시도
+          console.warn('[FocusDetector] GPU 초기화 실패, CPU로 전환합니다.', err);
+        }
       }
+      return { landmarker: await FaceLandmarker.createFromOptions(fileset, options('CPU')), delegate: 'CPU' };
     })();
     // 실패했다면 다음 시도에서 다시 로드할 수 있게 캐시를 비운다
-    landmarkerPromise.catch(() => {
-      landmarkerPromise = null;
+    landmarkerCache[preferred].catch(() => {
+      delete landmarkerCache[preferred];
+      filesetPromise = null;
     });
   }
-  return landmarkerPromise;
+  return landmarkerCache[preferred];
 }
+
+// 분석이 이만큼 연속으로 실패하면 CPU 로 바꾸고, 그래도 실패하면 화면에 오류를 띄운다
+const MAX_CONSECUTIVE_ERRORS = 20;
+// 정면 맞추기: 3초가 지나도 프레임이 이보다 적으면 조금 더 모은다 (느린 기기 대응)
+const CALIBRATION_MIN_SAMPLES = 8;
+const CALIBRATION_MAX_MS = 8000;
 
 // 조건이 이 시간 이상 연속으로 풀려야 지속 시간 측정을 초기화한다.
 // (눈 감김 점수가 0.5 근처에서 한두 프레임 튀는 것 때문에 2초가 계속 리셋되는 문제 방지)
@@ -108,6 +123,14 @@ export function useFocusDetector(settings) {
 
   // 캘리브레이션 진행 정보
   const calibRef = useRef(null); // { startedAt, samples: [{yaw, pitch}] }
+
+  // 분석 상태 (오류 대응 · FPS)
+  const delegateRef = useRef('GPU');
+  const errorCountRef = useRef(0);
+  const switchingRef = useRef(false);
+  const frameTimesRef = useRef([]);
+  const fpsRef = useRef(0);
+  const failRef = useRef(null); // 분석을 더 이상 못 할 때 호출 (아래에서 연결)
 
   useEffect(() => {
     settingsRef.current = settings;
@@ -185,14 +208,21 @@ export function useFocusDetector(settings) {
       }
       updateStatus(next);
 
-      // ---- 캘리브레이션: 3초 동안 정면 각도를 모아 평균을 기준값으로 저장 ----
+      // ---- 정면 맞추기(캘리브레이션): 3초 동안 정면 각도를 모아 평균을 기준값으로 저장 ----
+      // 시간은 "실제로 분석된 첫 프레임"부터 잰다. 모델 첫 실행이 느린 기기에서
+      // 3초가 프레임 몇 장 만에 지나가 버려 실패하던 문제를 막기 위함.
+      // (now 는 분석 "시작" 시각이라 첫 분석이 몇 초 걸리면 그 시간이 통째로 들어간다 → 끝난 시각으로 잰다)
       const calib = calibRef.current;
       if (calib) {
+        const doneAt = performance.now();
+        calib.startedAt ??= doneAt;
         if (raw) calib.samples.push({ yaw: raw.yaw, pitch: raw.pitch });
-        const progress = Math.min(1, (now - calib.startedAt) / CALIBRATION_MS);
-        if (progress >= 1) {
+        const elapsed = doneAt - calib.startedAt;
+        const progress = Math.min(1, elapsed / CALIBRATION_MS);
+        const enough = calib.samples.length >= CALIBRATION_MIN_SAMPLES;
+        if (progress >= 1 && (enough || elapsed >= CALIBRATION_MAX_MS)) {
           calibRef.current = null;
-          if (calib.samples.length >= 10) {
+          if (calib.samples.length >= 3) {
             const avg = (key) => calib.samples.reduce((sum, v) => sum + v[key], 0) / calib.samples.length;
             const saved = { yaw: avg('yaw'), pitch: avg('pitch'), savedAt: Date.now() };
             writeJSON(CALIBRATION_KEY, saved);
@@ -219,6 +249,8 @@ export function useFocusDetector(settings) {
           eyesClosedFor: eyesClosedSinceRef.current ? (now - eyesClosedSinceRef.current) / 1000 : 0,
           headAwayFor: headAwaySinceRef.current ? (now - headAwaySinceRef.current) / 1000 : 0,
           faceLostFor: hasFace ? 0 : lostFor / 1000,
+          fps: fpsRef.current,
+          delegate: delegateRef.current,
         });
       }
     },
@@ -237,12 +269,42 @@ export function useFocusDetector(settings) {
     lastVideoTimeRef.current = video.currentTime;
 
     const now = performance.now();
+    let result;
     try {
-      const result = landmarker.detectForVideo(video, now);
-      analyze(result, now);
+      result = landmarker.detectForVideo(video, now);
+      errorCountRef.current = 0;
     } catch (err) {
-      console.error('[FocusDetector] 프레임 분석 오류', err);
+      // 분석이 계속 실패하면 "집중 중"인 척하지 말고: GPU → CPU 전환 → 그래도 안 되면 오류 표시
+      errorCountRef.current += 1;
+      if (errorCountRef.current === 1) console.error('[FocusDetector] 프레임 분석 오류', err);
+      if (errorCountRef.current >= MAX_CONSECUTIVE_ERRORS && !switchingRef.current) {
+        if (delegateRef.current === 'GPU') {
+          switchingRef.current = true;
+          console.warn('[FocusDetector] GPU 분석이 계속 실패해 CPU로 전환합니다.');
+          loadLandmarker('CPU')
+            .then(({ landmarker: cpu, delegate }) => {
+              landmarkerRef.current = cpu;
+              delegateRef.current = delegate;
+              errorCountRef.current = 0;
+            })
+            .catch((e) => failRef.current?.(e))
+            .finally(() => {
+              switchingRef.current = false;
+            });
+        } else {
+          failRef.current?.(err);
+        }
+      }
+      return;
     }
+
+    // 초당 분석 횟수(FPS): 최근 1초 동안 분석한 프레임 수
+    const times = frameTimesRef.current;
+    times.push(now);
+    while (times.length && now - times[0] > 1000) times.shift();
+    fpsRef.current = times.length;
+
+    analyze(result, now);
   }, [analyze]);
 
   // ------------------------------------------------------------------
@@ -294,7 +356,11 @@ export function useFocusDetector(settings) {
       // 2) 얼굴 인식 모델 로드
       setCameraState('loading');
       try {
-        landmarkerRef.current = await loadLandmarker();
+        const { landmarker, delegate } = await loadLandmarker('GPU');
+        landmarkerRef.current = landmarker;
+        delegateRef.current = delegate;
+        errorCountRef.current = 0;
+        frameTimesRef.current = [];
       } catch (err) {
         console.error(err);
         stream.getTracks().forEach((t) => t.stop());
@@ -339,13 +405,21 @@ export function useFocusDetector(settings) {
     updateStatus('idle');
   }, [updateStatus]);
 
+  // 분석이 GPU·CPU 모두에서 계속 실패할 때: 카메라를 끄고 이유를 화면에 보여준다
+  failRef.current = (err) => {
+    console.error('[FocusDetector] 얼굴 분석을 계속할 수 없습니다.', err);
+    stop();
+    setCameraState('error');
+    setErrorMessage(`이 브라우저에서 얼굴 인식이 동작하지 않아요. 크롬 최신 버전에서 다시 시도해 주세요. (${err?.message ?? err})`);
+  };
+
   // ------------------------------------------------------------------
   // 캘리브레이션: 3초간 정면을 보면 그 자세를 기준 각도로 저장
   // ------------------------------------------------------------------
   const calibrate = useCallback(async () => {
     const ok = await start();
     if (!ok) return;
-    calibRef.current = { startedAt: performance.now(), samples: [] };
+    calibRef.current = { startedAt: null, samples: [] }; // 시작 시각은 첫 분석 프레임에서 정함
     setCalibration({ active: true, progress: 0, result: null });
   }, [start]);
 

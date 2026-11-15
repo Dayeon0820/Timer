@@ -16,6 +16,8 @@ function DebugPanel({ metrics, settings }) {
     ['Pitch 아래+', `${fmt(metrics.pitch)}°`, metrics.pitch >= settings.pitchThreshold],
     ['눈 감은 지', `${fmt(metrics.eyesClosedFor, 1)}s`, false],
     ['고개 돌린 지', `${fmt(metrics.headAwayFor, 1)}s`, false],
+    // 초당 분석 횟수가 너무 낮으면(5 미만) 감지가 늦어지므로 강조
+    ['분석 속도', `${metrics.fps ?? 0} FPS · ${metrics.delegate ?? '-'}`, (metrics.fps ?? 0) < 5],
   ];
   return (
     <dl className="debug">
