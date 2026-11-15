@@ -135,7 +135,6 @@ roll  = atan2(R[1][0], R[1][1]) // 기울기
 │  │  └─ defaults.js                # 기본 설정값, 상태 라벨
 │  ├─ styles/                       # tokens → base → components → layout
 │  └─ components/                   # ui/ (디자인 시스템) + 화면 (타이머, 카메라 패널, 지표, 기록, 설정, 오버레이)
-└─ .github/workflows/deploy.yml     # GitHub Pages 자동 배포
 ```
 
 ## 실행 방법
@@ -156,19 +155,33 @@ npm run build   # dist/ 폴더에 정적 파일 생성
 npm run preview
 ```
 
+## 파비콘 · 공유 미리보기
+
+| 파일 | 용도 |
+| --- | --- |
+| `public/favicon.svg`, `favicon.ico`, `favicon-32.png` | 브라우저 탭 아이콘 (SVG 우선, 구형 브라우저는 ICO/PNG) |
+| `public/apple-touch-icon.png` | iOS 홈 화면 아이콘 (180×180) |
+| `public/icon-192.png`, `icon-512.png`, `icon-maskable-512.png` | 안드로이드 홈 화면 아이콘 (`site.webmanifest`) |
+| `public/og-image.png` | 링크를 공유했을 때 뜨는 미리보기 이미지 (1200×630) |
+
+- `index.html` 에 설명(description), Open Graph(카카오톡·페이스북·슬랙·디스코드), X(트위터) 카드 메타를 넣었습니다.
+- 공유 미리보기 이미지는 **절대 주소**여야 해서, 빌드할 때 `index.html` 의 `%VITE_SITE_URL%` 을 사이트 주소로 바꿉니다 (`vite.config.js`). 우선순위: 환경 변수 `VITE_SITE_URL` → Vercel 배포 주소(자동) → `.env` 기본값.
+- 이미지를 고치려면 `public/favicon.svg` 나 `branding/og-image.html` 을 수정한 뒤 `npm run brand` 를 실행하세요. (설치된 Chrome/Edge 로 PNG·ICO 를 다시 만듭니다)
+- 카카오톡은 미리보기를 캐시하므로, 이미지를 바꾼 뒤에는 [카카오 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 캐시를 초기화하세요.
+
 ## 배포 방법
 
 `vite.config.js`에 `base: './'`를 설정해 두어서 어느 경로에 올려도 동작합니다.
 
-### GitHub Pages (자동)
-1. GitHub에 저장소를 만들고 코드를 `main` 브랜치에 push 합니다.
-2. 저장소 **Settings → Pages → Build and deployment → Source**를 **GitHub Actions**로 바꿉니다.
-3. push 할 때마다 `.github/workflows/deploy.yml`이 빌드해서 `https://<아이디>.github.io/<저장소명>/`에 배포합니다.
-
-### Vercel
+### Vercel (현재 배포 방식)
 1. [vercel.com](https://vercel.com)에서 GitHub 저장소를 Import 합니다.
 2. Framework Preset은 **Vite**로 자동 인식됩니다. (Build: `npm run build`, Output: `dist`)
 3. Deploy를 누르면 끝입니다. Vercel도 `npm install`을 실행하므로 WASM 파일이 자동으로 준비됩니다.
+4. 이후에는 `main` 브랜치에 push 할 때마다 Vercel이 자동으로 다시 배포합니다.
+5. 공유 미리보기용 사이트 주소는 Vercel 이 빌드 때 알려주는 실제 배포 주소(`VERCEL_PROJECT_PRODUCTION_URL`)로 자동 설정됩니다. 다른 주소(커스텀 도메인 등)를 쓰려면 Vercel 프로젝트의 Environment Variables 에 `VITE_SITE_URL` 을 지정하세요.
+
+### 다른 정적 호스팅 (GitHub Pages 등)
+`npm run build` 로 만든 `dist/` 폴더를 그대로 올리면 됩니다. 이때는 `.env` 의 `VITE_SITE_URL` 을 그 사이트 주소로 바꾼 뒤 빌드하세요.
 
 ## 개인정보
 

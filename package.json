@@ -7,7 +7,8 @@
     "postinstall": "node scripts/copy-wasm.mjs",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "brand": "node branding/generate.mjs"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^1.2.3",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.3.0",
+    "puppeteer-core": "^25.17.0",
     "vite": "^8.3.8"
   }
 }

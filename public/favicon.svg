@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 집중 타이머 파비콘: 딥그린 배경 + 아이보리 "새싹떡" 마스코트 (색은 tokens.css 의 sage-700 / sage-50) -->
+  <rect width="64" height="64" rx="15" fill="#3b6343"/>
+  <g transform="translate(2.2 8.6) scale(0.48)">
+    <path d="M62 24v-10" fill="none" stroke="#f1f5ee" stroke-width="5" stroke-linecap="round"/>
+    <path d="M62 15c-4-8-12-10-17-7 3 7 10 9 17 7zM62 15c4-8 12-10 17-7-3 7-10 9-17 7z" fill="#b7cfb0"/>
+    <path d="M12 94C12 50 34 24 62 24s50 26 50 70z" fill="#f1f5ee"/>
+    <circle cx="47" cy="60" r="6" fill="#3b6343"/>
+    <circle cx="77" cy="60" r="6" fill="#3b6343"/>
+    <path d="M55 70q7 7 14 0" fill="none" stroke="#3b6343" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg>
