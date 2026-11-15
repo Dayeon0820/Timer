@@ -1,0 +1,1161 @@
+/* =========================================================
+   레이아웃 & 화면별 스타일
+   - 앱 틀(헤더/탭바)과 각 화면 배치만 다룬다. 색/간격은 모두 토큰 사용.
+   - 브레이크포인트: 720px 이하 = 모바일
+   ========================================================= */
+
+/* ---------------- 앱 틀 ---------------- */
+.app {
+  position: relative;
+  max-width: var(--layout-max);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 var(--layout-gutter) var(--space-10);
+}
+
+/* 배경의 부드러운 원형 장식 */
+.app::before,
+.app::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--color-bg-decor);
+  pointer-events: none;
+}
+.app::before {
+  width: 420px;
+  height: 420px;
+  left: -180px;
+  bottom: -200px;
+}
+.app::after {
+  width: 300px;
+  height: 300px;
+  right: -120px;
+  top: 30%;
+  opacity: 0.7;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--header-height);
+  margin-bottom: var(--space-4);
+  background: linear-gradient(var(--color-bg) 70%, transparent);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.brand__logo {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-primary-tint);
+}
+.brand__name {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+}
+
+.app-tabbar {
+  display: none;
+}
+
+/* ---------------- 공통 페이지 ---------------- */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.page-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-primary);
+  line-height: var(--leading-tight);
+}
+.page-subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+.page-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ---------------- 타이머 화면 ---------------- */
+.timer-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: var(--space-8) var(--space-10);
+  align-items: start;
+}
+
+.timer-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding-top: var(--space-12);
+}
+.timer-stage__title {
+  display: none; /* 모바일에서만 표시 */
+}
+.timer-stage__title.is-rest {
+  color: var(--color-rest);
+}
+
+/* 링 + 링 위에 걸터앉은 마스코트 (링 크기는 파일 끝 "뷰포트 맞춤"에서 계산) */
+.ring-holder {
+  position: relative;
+  margin-top: var(--mascot-overhang); /* 링 위로 튀어나온 마스코트 자리 확보 */
+}
+.ring-holder__mascot {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  /* 마스코트 앞발(높이의 92% 지점)이 링 선 위에 오도록 */
+  top: calc(var(--ring-size) * 0.0525 - 68px);
+  transform: translateX(-50%);
+}
+
+.timer-time {
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.timer-caption {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+.timer-caption svg {
+  color: var(--color-primary);
+}
+.is-rest .timer-caption svg {
+  color: var(--color-rest);
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.timer-controls__main {
+  min-width: 180px;
+}
+.timer-controls__sub {
+  --btn-h: var(--control-height-md);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  padding: 0 var(--space-6);
+}
+
+.up-next {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.up-next strong {
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-bold);
+}
+
+/* ---------------- 카메라 패널 ---------------- */
+.camera-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.camera-panel .card__header {
+  margin-bottom: var(--space-3);
+  padding: 0 var(--space-1);
+}
+.camera-panel .card__title {
+  font-size: var(--text-sm);
+}
+
+.camera-view {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-muted);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline-color var(--duration-slow) var(--ease-out);
+}
+.camera-view--warn {
+  outline-color: var(--color-warn);
+}
+.camera-view--bad {
+  outline-color: var(--color-danger);
+}
+.camera-view__video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scaleX(-1); /* 거울처럼 보이도록 좌우 반전 (표시만, 분석에는 영향 없음) */
+}
+.camera-view__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 얼굴 인식 영역 모서리 표시 */
+.camera-view__frame {
+  position: absolute;
+  inset: 18% 26%;
+  pointer-events: none;
+}
+.camera-view__frame span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--color-surface);
+  opacity: 0.9;
+}
+.camera-view__frame span:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: var(--radius-sm);
+}
+.camera-view__frame span:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-left: 0;
+  border-bottom: 0;
+  border-top-right-radius: var(--radius-sm);
+}
+.camera-view__frame span:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom-left-radius: var(--radius-sm);
+}
+.camera-view__frame span:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: var(--radius-sm);
+}
+.camera-view__status {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-3);
+  transform: translateX(-50%);
+  box-shadow: var(--shadow-md);
+}
+.camera-view__status:not(.chip--warn):not(.chip--bad) {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+/* 디버그 정보 */
+.debug {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  right: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px var(--space-4);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+.debug div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.debug dt {
+  color: var(--color-text-secondary);
+}
+.debug dd {
+  margin: 0;
+  font-weight: var(--weight-bold);
+}
+.debug .is-hit dd {
+  color: var(--color-warn);
+}
+
+.camera-panel__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.camera-panel__counts .chip {
+  flex: 1;
+  justify-content: center;
+}
+
+.info-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-5);
+  min-height: 52px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.info-bar > svg {
+  color: var(--color-primary);
+}
+.info-bar span {
+  flex: 1;
+}
+.is-held .info-bar > svg {
+  color: var(--color-warn);
+}
+.privacy-note {
+  padding: 0 var(--space-5);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.camera-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.calib-note {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---------------- 하단 지표 ---------------- */
+.metrics-bar {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: var(--space-6) 0;
+}
+.metrics-bar .metric {
+  padding: 0 var(--space-8);
+}
+.metrics-bar .metric + .metric {
+  border-left: 1px solid var(--color-border);
+}
+.metric-mascot {
+  margin-bottom: -4px;
+}
+
+/* ---------------- 기록 화면 ---------------- */
+.history-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.highlight-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.highlight-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+.highlight-tile--focus {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+}
+.highlight-tile--rest {
+  background: var(--color-rest-tint);
+  color: var(--color-rest-strong);
+}
+.highlight-tile__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+}
+.highlight-tile__value {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.highlight-tile__value small,
+.big-figure__value small {
+  font-size: 0.55em;
+  font-weight: var(--weight-semibold);
+  margin-left: 1px;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.big-figure {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.big-figure__value {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+}
+.big-figure__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.summary-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.summary-row dt {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.summary-row dd {
+  margin: 0;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 시간대별 분석 */
+.insight-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+.hourly-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 막대 차트 */
+.chart {
+  position: relative;
+}
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.chart g:focus {
+  outline: none;
+}
+.chart-grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+.chart-baseline {
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+.chart-axis {
+  fill: var(--chart-axis);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.chart-axis.strong {
+  fill: var(--color-text);
+  font-weight: var(--weight-bold);
+}
+.chart-value {
+  fill: var(--color-text);
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+}
+.chart-bar {
+  fill: var(--chart-bar);
+  transition: fill var(--duration-base) var(--ease-out);
+}
+.chart-bar.today,
+.chart g:hover .chart-bar,
+.chart g:focus .chart-bar {
+  fill: var(--chart-bar-highlight);
+}
+.chart-hover-band {
+  fill: var(--color-primary-tint);
+}
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, calc(-100% - 10px));
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.chart-tooltip small {
+  color: var(--color-text-muted);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.data-table th,
+.data-table td {
+  padding: var(--space-2);
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.data-table th:first-child,
+.data-table td:first-child {
+  text-align: left;
+}
+.data-table th {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+/* ---------------- 설정 화면 ---------------- */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+.stepper-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* ---------------- 오버레이 ---------------- */
+.alert-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-alert);
+  pointer-events: none;
+  animation: alert-pulse 1.8s ease-in-out infinite;
+}
+.alert-vignette--warn {
+  box-shadow: inset 0 0 140px 24px color-mix(in srgb, var(--color-warn) 28%, transparent);
+}
+.alert-vignette--bad {
+  box-shadow: inset 0 0 140px 24px color-mix(in srgb, var(--color-danger) 28%, transparent);
+}
+/* 졸음 대응: 화면 깜빡임 (단계가 오를수록 빠르고 진하게) */
+.alert-flash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-alert);
+  pointer-events: none;
+  background: var(--color-surface-raised);
+  opacity: 0;
+  animation: alert-flash 1.4s steps(1, end) infinite;
+}
+.alert-flash--2 {
+  background: var(--color-warn-tint);
+  animation-duration: 1s;
+}
+.alert-flash--3 {
+  background: var(--color-danger-tint);
+  animation-duration: 0.7s;
+}
+@keyframes alert-flash {
+  0%,
+  20% {
+    opacity: 0.85;
+  }
+  10%,
+  30%,
+  100% {
+    opacity: 0;
+  }
+}
+/* 움직임 줄이기 설정 사용자에게는 깜빡임 대신 옅은 색만 */
+@media (prefers-reduced-motion: reduce) {
+  .alert-flash {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
+@keyframes alert-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.alert-banner {
+  position: fixed;
+  top: calc(var(--header-height) + var(--space-2));
+  left: 50%;
+  z-index: var(--z-alert);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(480px, calc(100vw - var(--space-8)));
+  padding: var(--space-3) var(--space-5) var(--space-3) var(--space-3);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-warn);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  pointer-events: none; /* 안내용이므로 아래 버튼 클릭을 막지 않음 */
+  animation: rise var(--duration-base) var(--ease-out);
+}
+.alert-banner--bad {
+  border-left-color: var(--color-danger);
+}
+.alert-banner strong {
+  font-size: var(--text-sm);
+}
+.alert-banner p {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.modal__mascot {
+  margin: 0 auto;
+}
+.steps {
+  text-align: left;
+  padding-left: var(--space-5);
+  margin: var(--space-3) 0;
+}
+.privacy-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-tint);
+  font-size: var(--text-xs);
+  text-align: left;
+  color: var(--color-primary-hover);
+}
+.privacy-inline svg {
+  margin-top: 1px;
+}
+.calib-ring {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
+}
+.calib-ring__count {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-black);
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   태블릿
+   ========================================================= */
+@media (max-width: 1024px) {
+  .timer-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--space-6);
+  }
+  .metrics-bar .metric {
+    padding: 0 var(--space-5);
+  }
+  .history-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   모바일 - 상단 제목 + 링 + 아이콘 버튼 + 하단 탭바
+   ========================================================= */
+@media (max-width: 720px) {
+  .app {
+    padding-bottom: calc(var(--tabbar-height) + var(--space-8) + env(safe-area-inset-bottom));
+  }
+  .app::after {
+    display: none;
+  }
+
+  /* 상단 브랜드 헤더 대신 각 화면 제목을 보여준다 */
+  .app-header {
+    display: none;
+  }
+  .page {
+    padding-top: var(--space-8);
+    gap: var(--space-4);
+  }
+  .page-header {
+    align-items: center;
+    text-align: center;
+  }
+  .page-title {
+    font-size: var(--text-2xl);
+  }
+
+  /* 하단 탭바 */
+  .app-tabbar {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-tabbar);
+    padding: var(--space-1) var(--space-2) env(safe-area-inset-bottom);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* 타이머 */
+  .timer-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .timer-stage {
+    padding-top: var(--space-8);
+    gap: var(--space-5);
+  }
+  .timer-stage__title {
+    display: block;
+    font-size: var(--text-2xl);
+  }
+  .timer-time {
+    font-size: clamp(3rem, 16vw, 4.25rem);
+  }
+  .timer-caption {
+    font-size: var(--text-sm);
+  }
+
+  /* 버튼: 아이콘만 남기고 레퍼런스처럼 큰 사각 + 원형 */
+  .timer-controls {
+    flex-wrap: nowrap;
+    gap: var(--space-3);
+  }
+  .timer-controls .btn__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .timer-controls__main {
+    --btn-h: 72px;
+    min-width: 0;
+    width: 112px;
+    padding: 0;
+    border-radius: var(--radius-lg);
+  }
+  .timer-controls__sub {
+    --btn-h: 64px;
+    width: 64px;
+    padding: 0;
+    border: 0;
+    background: var(--color-primary-tint);
+    color: var(--color-primary);
+    box-shadow: none;
+  }
+  .is-rest .timer-controls__sub {
+    background: var(--color-rest-tint);
+    color: var(--color-rest-strong);
+  }
+  .up-next {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .up-next strong {
+    font-size: var(--text-lg);
+    color: var(--color-primary);
+  }
+  .is-rest .up-next strong {
+    color: var(--color-rest);
+  }
+
+  /* 지표: 세로 목록 */
+  .metrics-bar {
+    grid-template-columns: 1fr;
+    padding: var(--space-2) 0;
+  }
+  .metrics-bar .metric {
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+  }
+  .metrics-bar .metric + .metric {
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .metric__value {
+    font-size: var(--text-xl);
+  }
+
+  /* 카드 여백 축소 */
+  .card {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+  }
+  .card--tight {
+    padding: var(--space-3);
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .history-grid {
+    gap: var(--space-4);
+  }
+
+  .alert-banner {
+    top: var(--space-3);
+  }
+  .toast {
+    bottom: calc(var(--tabbar-height) + var(--space-4) + env(safe-area-inset-bottom));
+  }
+}
+
+/* =========================================================
+   뷰포트 맞춤 레이아웃 (높이 기준 반응형)
+   원칙
+   1) 데스크톱/태블릿: 타이머 화면은 스크롤 없이 한 화면(100dvh)에 들어간다.
+      - 링 크기 = 화면 높이 − 링 이외 세로 요소들(--ring-chrome)
+      - 카메라 화면은 남은 공간을 채우며 늘고 줄어든다 (고정 4:3 비율 대신)
+   2) 모바일: "한 화면 = 한 섹션". 첫 화면(탭바 위)에 타이머가 꼭 맞고,
+      카메라·지표는 다음 화면 경계에서 시작해 어중간하게 걸치지 않는다.
+      스크롤은 섹션 시작점 근처에서 부드럽게 멈춘다 (scroll-snap proximity).
+   3) 높이가 아주 낮으면 덜 중요한 요소부터 줄이거나 숨긴다.
+   ========================================================= */
+
+/* 링 크기: 너비 기준과 높이 기준 중 더 작은 쪽 */
+.ring-holder {
+  --ring-chrome: 450px; /* 헤더 + 지표 + 버튼 + 다음 안내 + 마스코트 + 여백 */
+  --ring-size: clamp(200px, min(36vw, calc(var(--viewport-h) - var(--ring-chrome))), 440px);
+}
+
+/* 모바일 전용 카메라 상태 칩 (데스크톱에서는 카메라 패널이 옆에 보이므로 숨김) */
+.stage-camera-link {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+.stage-camera-link svg {
+  color: var(--color-text-muted);
+}
+
+/* ---------- 1) 데스크톱/태블릿: 한 화면에 맞추기 ---------- */
+@media (min-width: 721px) and (min-height: 600px) {
+  .app--timer {
+    height: var(--viewport-h);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--space-5);
+  }
+  .app--timer .app-header {
+    flex: none;
+    margin-bottom: var(--space-2);
+  }
+  .app--timer .app-main {
+    flex: 1;
+    min-height: 0;
+  }
+  .app--timer .view-timer {
+    height: 100%;
+  }
+  .app--timer .timer-layout {
+    height: 100%;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: var(--space-5) var(--space-10);
+  }
+  .app--timer .timer-stage {
+    min-height: 0;
+    justify-content: center;
+    padding-top: 0;
+    gap: clamp(var(--space-3), 2.4vh, var(--space-6));
+  }
+  .app--timer .camera-column {
+    min-height: 0;
+    justify-content: center; /* 공간이 남으면 타이머와 세로 가운데 정렬 */
+  }
+  .app--timer .camera-panel {
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  /* 기본은 4:3, 높이가 모자랄 때만 줄어든다 (영상은 object-fit: cover 로 잘려 보임) */
+  .app--timer .camera-view {
+    flex: 0 1 auto;
+    min-height: 140px;
+  }
+}
+
+/* 낮은 데스크톱 화면 (노트북 768px 이하): 보조 요소를 줄인다 */
+@media (min-width: 721px) and (max-height: 820px) {
+  .ring-holder {
+    --ring-chrome: 410px;
+  }
+  .calib-note {
+    display: none; /* 정면 맞추기 버튼의 title 로도 안내됨 */
+  }
+  .info-bar {
+    min-height: 44px;
+  }
+  .metrics-bar {
+    padding: var(--space-4) 0;
+  }
+  .metrics-bar .metric__value {
+    font-size: var(--text-xl);
+  }
+  .mini-bars {
+    height: 34px;
+  }
+  .metric-mascot {
+    width: 46px;
+    height: auto;
+  }
+  .camera-panel .card__header {
+    margin-bottom: var(--space-2);
+  }
+  .camera-panel__counts {
+    margin-top: var(--space-2);
+  }
+  .camera-panel__counts .chip {
+    height: 28px;
+  }
+}
+
+/* ---------- 2) 모바일: 한 화면 = 한 섹션 ---------- */
+@media (max-width: 720px) {
+  html {
+    scroll-snap-type: y proximity;
+    scroll-padding-bottom: var(--tabbar-height);
+  }
+
+  /* 첫 화면: 탭바 위 공간을 정확히 채우고, 내용은 세로 가운데 */
+  .app--timer .timer-stage {
+    min-height: calc(var(--viewport-h) - var(--tabbar-height) - env(safe-area-inset-bottom));
+    justify-content: center;
+    padding: var(--space-4) 0;
+    gap: clamp(var(--space-2), 2.2vh, var(--space-5));
+    scroll-snap-align: start;
+  }
+  .ring-holder {
+    --ring-chrome: 430px; /* 제목 + 마스코트 + 버튼 + 다음 안내 + 카메라 칩 + 탭바 + 여백 */
+    --ring-size: clamp(170px, min(78vw, calc(var(--viewport-h) - var(--ring-chrome))), 330px);
+  }
+  .stage-camera-link {
+    display: inline-flex;
+  }
+
+  /* 두 번째 화면 = 카메라 + 지표: 한 화면에 함께 들어가도록
+     - 카메라 화면은 4:3 이 기본, 작은 폰에서는 남은 높이만큼만
+     - 지표는 3칸 가로 요약 (미니 막대·마스코트는 생략) */
+  .camera-view {
+    width: 100%; /* 높이가 줄어도 폭은 카드에 꽉 차게 (영상은 cover 로 잘림) */
+    max-height: max(160px, calc(var(--viewport-h) - var(--tabbar-height) - 410px));
+  }
+  .metrics-bar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: var(--space-4) var(--space-1);
+  }
+  .metrics-bar .metric,
+  .metrics-bar .metric + .metric {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 var(--space-3);
+    border-top: 0;
+  }
+  .metrics-bar .metric + .metric {
+    border-left: 1px solid var(--color-border);
+  }
+  .metrics-bar .metric__label {
+    font-size: var(--text-2xs);
+    gap: var(--space-1);
+  }
+  .metrics-bar .metric__label svg {
+    width: 14px;
+    height: 14px;
+  }
+  .metrics-bar .metric__value {
+    font-size: var(--text-lg);
+  }
+  .metrics-bar .mini-bars,
+  .metrics-bar .metric-mascot {
+    display: none;
+  }
+  /* 좁은 칸에서는 짧은 이름 (스크린리더는 긴 이름을 읽음) */
+  .metrics-bar .metric__label-full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .metrics-bar .metric__label-short {
+    display: inline;
+  }
+  .metrics-bar .metric__text {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* 다음 섹션들은 화면 경계에 맞춰 시작 */
+  .camera-column,
+  .page-header,
+  .history-grid > .card,
+  .page > .card,
+  .settings-grid > .card {
+    scroll-snap-align: start;
+    scroll-margin-top: var(--space-4);
+  }
+}
+
+/* 작은 휴대폰 (iPhone SE 등 높이 700px 이하): 다음 안내를 한 줄로 */
+@media (max-width: 720px) and (max-height: 700px) {
+  .ring-holder {
+    --ring-chrome: 400px;
+  }
+  .up-next {
+    flex-direction: row;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+  .up-next strong {
+    font-size: var(--text-md);
+  }
+  .timer-controls__main {
+    --btn-h: 64px;
+  }
+  .timer-controls__sub {
+    --btn-h: 56px;
+    width: 56px;
+  }
+}
+
+/* ---------- 3) 모달: 낮은 화면에서도 한 화면 안에 ---------- */
+@media (max-height: 700px) {
+  .modal {
+    padding: var(--space-5) var(--space-5) var(--space-4);
+  }
+  .modal__mascot {
+    width: 56px;
+    height: auto;
+  }
+  .modal__title {
+    margin-top: var(--space-2);
+    font-size: var(--text-lg);
+  }
+  .mission-steps {
+    margin-top: var(--space-3);
+  }
+  .mission-step {
+    padding: var(--space-2) var(--space-3);
+  }
+  .modal__actions {
+    margin-top: var(--space-4);
+  }
+}

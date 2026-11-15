@@ -1,0 +1,157 @@
+/* =========================================================
+   디자인 토큰 (Design Tokens)
+   - 앱의 모든 색/글꼴/간격/모서리/그림자/모션 값은 여기서만 정의한다.
+   - 컴포넌트와 페이지 CSS는 반드시 이 변수만 참조한다. (색상값 하드코딩 금지)
+   - 구조: ① 원시 팔레트(Primitive) → ② 의미 토큰(Semantic) → ③ 컴포넌트에서 사용
+   ========================================================= */
+
+:root {
+  /* ---------- ① 원시 팔레트: 세이지 그린 램프 ---------- */
+  --sage-25: #f7f9f3; /* 아이보리 */
+  --sage-50: #f1f5ee; /* 민트 아이보리 (배경) */
+  --sage-100: #e6eee2;
+  --sage-200: #d3e2cd;
+  --sage-300: #b7cfb0;
+  --sage-400: #92b38a;
+  --sage-500: #6f9568;
+  --sage-600: #507a4f;
+  --sage-700: #3b6343; /* 딥그린 */
+  --sage-800: #2d4f35;
+  --sage-900: #1f3626;
+
+  /* 휴식(보조) - 차분한 스카이 블루 */
+  --sky-100: #e3eef3;
+  --sky-300: #a9c9d8;
+  --sky-600: #4f86a0;
+  --sky-800: #2f5d73;
+
+  /* 상태 색 (채도를 낮춰 집중을 방해하지 않게) */
+  --amber-100: #f7ecd6;
+  --amber-600: #b7812a;
+  --rose-100: #f6e1dc;
+  --rose-600: #b85a4c;
+
+  --white: #ffffff;
+  --ink: #1d2b22;
+
+  /* ---------- ② 의미 토큰: 색 ---------- */
+  --color-bg: var(--sage-50);
+  --color-bg-decor: var(--sage-100); /* 배경의 부드러운 원형 장식 */
+  --color-surface: var(--sage-25); /* 카드 */
+  --color-surface-raised: var(--white);
+  --color-surface-muted: var(--sage-100); /* 비활성/트랙/보조 버튼 */
+  --color-border: #e0e8db;
+  --color-border-strong: var(--sage-200);
+
+  --color-text: var(--ink);
+  --color-text-secondary: #56665b;
+  --color-text-muted: #86948a;
+  --color-text-on-primary: var(--sage-25);
+
+  --color-primary: var(--sage-700);
+  --color-primary-hover: var(--sage-800);
+  --color-primary-soft: var(--sage-200);
+  --color-primary-tint: var(--sage-100);
+
+  --color-rest: var(--sky-600);
+  --color-rest-strong: var(--sky-800);
+  --color-rest-soft: var(--sky-300);
+  --color-rest-tint: var(--sky-100);
+
+  --color-good: var(--sage-600);
+  --color-good-tint: var(--sage-100);
+  --color-warn: var(--amber-600);
+  --color-warn-tint: var(--amber-100);
+  --color-danger: var(--rose-600);
+  --color-danger-tint: var(--rose-100);
+
+  --color-focus-ring: color-mix(in srgb, var(--sage-600) 45%, transparent);
+  --color-scrim: color-mix(in srgb, var(--sage-900) 28%, transparent);
+
+  /* 데이터 시각화 (단일 계열: 세이지 한 가지 색상 계열) */
+  --chart-bar: var(--sage-400);
+  --chart-bar-highlight: var(--sage-700);
+  --chart-grid: var(--sage-100);
+  --chart-axis: var(--color-text-muted);
+
+  /* ---------- 타이포그래피 ---------- */
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+
+  --text-2xs: 0.6875rem; /* 11 */
+  --text-xs: 0.75rem; /* 12 */
+  --text-sm: 0.875rem; /* 14 */
+  --text-md: 1rem; /* 16 */
+  --text-lg: 1.125rem; /* 18 */
+  --text-xl: 1.375rem; /* 22 */
+  --text-2xl: 1.75rem; /* 28 */
+  --text-3xl: 2.25rem; /* 36 */
+  --text-display: clamp(3.5rem, 13vw, 6rem); /* 타이머 숫자 */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --tracking-tight: -0.02em;
+  --tracking-display: -0.04em;
+
+  /* ---------- 간격 (4px 단위) ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---------- 모서리 ---------- */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---------- 그림자 (딥그린 기반의 아주 옅은 그림자) ---------- */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--sage-900) 5%, transparent);
+  --shadow-md: 0 1px 2px color-mix(in srgb, var(--sage-900) 4%, transparent),
+    0 8px 24px color-mix(in srgb, var(--sage-900) 6%, transparent);
+  --shadow-lg: 0 2px 4px color-mix(in srgb, var(--sage-900) 5%, transparent),
+    0 16px 40px color-mix(in srgb, var(--sage-900) 10%, transparent);
+  --shadow-primary: 0 6px 18px color-mix(in srgb, var(--sage-700) 28%, transparent);
+
+  /* ---------- 모션 ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 400ms;
+
+  /* ---------- 레이아웃 ---------- */
+  --layout-max: 1180px;
+  --layout-gutter: var(--space-6);
+  --header-height: 72px;
+  --tabbar-height: 68px;
+  --mascot-overhang: 56px; /* 링 위로 튀어나온 마스코트 높이 (자리 확보용) */
+  --viewport-h: 100dvh; /* 주소창이 접히고 펴지는 모바일에서도 실제 보이는 높이 */
+  --control-height-sm: 36px;
+  --control-height-md: 48px;
+  --control-height-lg: 60px;
+
+  --z-header: 10;
+  --z-tabbar: 20;
+  --z-alert: 30;
+  --z-overlay: 40;
+  --z-toast: 50;
+  --z-modal: 60;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --layout-gutter: var(--space-4);
+  }
+}

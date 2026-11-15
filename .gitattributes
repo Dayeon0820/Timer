@@ -1,0 +1,4 @@
+# 텍스트는 LF 로 통일, 모델 파일은 바이너리로 취급 (줄바꿈 변환 방지)
+* text=auto eol=lf
+*.task binary
+*.wasm binary
